@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"os"
 	"regexp"
 	"strings"
 
@@ -17,8 +18,14 @@ func GetAllJKT48Rooms(bar *progressbar.ProgressBar, resultChan chan<- *[]models.
 	res, err := http.Get(AKB48RoomURL)
 	if err != nil {
 		LogError(err)
+		os.Exit(1)
 	}
 	defer res.Body.Close()
+
+	if res.StatusCode != 200 {
+		LogError(fmt.Errorf("⚠️ Error: %s", res.Status))
+		os.Exit(1)
+	}
 
 	var decodedData []models.Room
 	decoder := json.NewDecoder(res.Body)
@@ -67,46 +74,47 @@ func GetAllJKT48Rooms(bar *progressbar.ProgressBar, resultChan chan<- *[]models.
 	resultChan <- &jkt48Room
 }
 
-func GetActiveRooms() *[]models.LiveRoom {
-	var liveRooms []models.LiveRoom
+func GetActiveRoomsByMemberData(roomId int) *[]models.StreamURLList {
+	var StreamURLList []models.StreamURLList
 
-	res, err := http.Get("https://www.showroom-live.com/api/live/onlives")
+	res, err := http.Get(fmt.Sprintf("%s/streaming_url?room_id=%d", LiveApiURL, roomId))
 	if err != nil {
-		fmt.Println(err)
+		LogError(err)
+		os.Exit(1)
 	}
 	defer res.Body.Close()
+
+	if res.StatusCode != 200 {
+		LogError(fmt.Errorf("⚠️ Error: %s", res.Status))
+		os.Exit(1)
+	}
 
 	var decodedData interface{}
 	decoder := json.NewDecoder(res.Body)
 	if err := decoder.Decode(&decodedData); err != nil {
-		fmt.Println(err)
+		LogError(err)
 	}
 
-	for _, data := range decodedData.(map[string]interface{})["onlives"].([]interface{}) {
-		if data.(map[string]interface{})["genre_name"] == "Idol" {
-			for _, room := range data.(map[string]interface{})["lives"].([]interface{}) {
-				roomKey := room.(map[string]interface{})["room_url_key"]
-				if strings.Contains(roomKey.(string), "JKT48") {
-					roomId := room.(map[string]interface{})["room_id"]
-					streamURL := room.(map[string]interface{})["streaming_url_list"].([]interface{})[0].(map[string]interface{})["url"]
-					liveRooms = append(liveRooms, models.LiveRoom{RoomId: int(roomId.(float64)), RoomKey: roomKey.(string), StreamURL: streamURL.(string)})
-				}
-			}
-		}
+	for _, data := range decodedData.(map[string]interface{})["streaming_url_list"].([]interface{}) {
+		StreamURLList = append(StreamURLList, models.StreamURLList{Label: data.(map[string]interface{})["label"].(string), StreamURL: data.(map[string]interface{})["url"].(string)})
 	}
 
-	return &liveRooms
+	return &StreamURLList
 }
 
-func GetStreamKey(url string) (string, error) {
+func GetStreamKey(url string) (*models.LiveStream, error) {
 	print(url)
 	pattern := `https://hls-origin\d+\.showroom-cdn\.com/liveedge/([A-Za-z0-9]+)_low/chunklist\.m3u8`
 	re := regexp.MustCompile(pattern)
 	match := re.FindStringSubmatch(url)
 	if len(match) >= 2 {
-		key := match[1]
-		return key, nil
+		liveStreamData := models.LiveStream{
+			// The unique id logic still not clear yet
+			UniqueId: match[0],
+			Key:      match[1],
+		}
+		return &liveStreamData, nil
 	} else {
-		return "", fmt.Errorf("Cannot find stream key")
+		return nil, fmt.Errorf("Cannot find stream key")
 	}
 }

@@ -3,6 +3,11 @@ package utils
 import "github.com/adrianfinantyo/jkt48-showroom-cli/models"
 
 const (
+	AppVersion     = "v1.0.0"
+	AppName        = "JKT48 Showroom CLI"
+	AppDescription = "JKT48 Showroom CLI is a CLI tool to get information about JKT48 members showrooms"
+	AppAuthor      = "Adrian Finantyo"
+	AppLicense     = "MIT"
 	ShowroomApiURL = "https://www.showroom-live.com/api"
 	RoomApiURL     = ShowroomApiURL + "/room"
 	LiveApiURL     = ShowroomApiURL + "/live"

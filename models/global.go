@@ -13,12 +13,21 @@ type Room struct {
 }
 
 type LiveRoom struct {
-	RoomId    int
-	RoomKey   string
-	StreamURL string
+	RoomId        int
+	RoomKey       string
+	StreamURLList []StreamURLList
 }
 
+type StreamURLList struct {
+	Label     string
+	StreamURL string
+}
 type CustomRoom struct {
 	Nick   string
 	RoomId int
+}
+
+type LiveStream struct {
+	UniqueId string
+	Key      string
 }

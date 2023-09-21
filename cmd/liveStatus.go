@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/adrianfinantyo/jkt48-showroom-cli/models"
@@ -18,19 +19,20 @@ var liveStatusCmd = &cobra.Command{
 		memberChan := make(chan *[]models.Room)
 
 		utils.LogInfo("💫 Getting all JKT48 members live status...")
-		progressBar := progressbar.NewOptions(len(utils.AddedRooms), progressbar.OptionSetWidth(35))
+		fmt.Println()
+		progressBar := progressbar.NewOptions(len(utils.AddedRooms), progressbar.OptionSetWidth(35), progressbar.OptionOnCompletion(func() {
+			fmt.Fprint(cmd.OutOrStdout(), "\n")
+		}))
 
 		go utils.GetAllJKT48Rooms(progressBar, memberChan)
 
 		member := <-memberChan
 
-		utils.ClearScreen()
-
-		utils.PrintHeader("JKT48 Showroom CLI", "Live Status")
-
 		table := tablewriter.NewWriter(os.Stdout)
 		table.SetAutoWrapText(false)
 		table.SetHeader([]string{"Name", "Live Status"})
+
+		table.SetColumnAlignment([]int{tablewriter.ALIGN_LEFT, tablewriter.ALIGN_CENTER})
 
 		for _, data := range *member {
 			var liveStatus string
@@ -46,7 +48,5 @@ var liveStatusCmd = &cobra.Command{
 }
 
 func init() {
-	utils.PrintHeader("JKT48 Showroom CLI", "Live Status")
-
 	rootCmd.AddCommand(liveStatusCmd)
 }

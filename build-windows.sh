@@ -1,1 +1,0 @@
-GOOS=windows GOARCH=amd64 go build -o sr-jkt.exe main.go

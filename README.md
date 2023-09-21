@@ -26,18 +26,12 @@ This app is fit for you who want to watch JKT48 Showroom Live Streaming without 
 
 ## Quick Start
 
-Hey Wots! You can use this app by following the steps below:
-
-### Pre-requisites
-
 [VLC Media Player](https://www.videolan.org/vlc/index.html) is required to enable the live streaming feature.
 
-### Installation
-
-| Role      | Description                                                                                   |
-| --------- | --------------------------------------------------------------------------------------------- |
-| Consumer  | The ideal setup for `client` that only use the application. [Instructions](#)                 |
-| Developer | The ideal setup for `developer` that want to contribute to the application. [Instructions](#) |
+| Role      | Description                                                                                           |
+| --------- | ----------------------------------------------------------------------------------------------------- |
+| Consumer  | The ideal setup for `client` that only use the application. [Instructions](./docs/CONSUMER_GUIDES.md) |
+| Developer | The ideal setup for `developer` that want to contribute to the application. [Instructions](#)         |
 
 ## Contributing
 

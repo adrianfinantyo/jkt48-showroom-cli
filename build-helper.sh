@@ -1,22 +1,40 @@
-# create build command
+#!/usr/bin/env bash
 
-# see the following for more specific info
-# https://www.digitalocean.com/community/tutorials/how-to-build-go-executables-for-multiple-platforms-on-ubuntu-16-04
+# clean cache
+go clean -cache
 
-# ask for the target
-echo "What is the target OS?"
-read target
+package=$1
+if [[ -z "$package" ]]; then
+  echo "usage: $0 <package-name>"
+  exit 1
+fi
+package_split=(${package//\// })
+package_name=${package_split[-1]}
+	
+platforms=("windows/amd64" "windows/386" "linux/amd64" "linux/386")
 
-# ask for the arch
-echo "What is the target arch?"
-read arch
+for platform in "${platforms[@]}"
+do
+	platform_split=(${platform//\// })
+	GOOS=${platform_split[0]}
+	GOARCH=${platform_split[1]}
+	out_dir=jkt48show'-'$GOOS'-'$GOARCH
+	output_name=jkt48sr
+	if [ $GOOS = "windows" ]; then
+		output_name+='.exe'
+	fi	
 
-# ask for the source
-echo "What is the source?"
-read source
+	env GOOS=$GOOS GOARCH=$GOARCH go build -o ./releases/$out_dir/$output_name $package.go
+	if [ $? -ne 0 ]; then
+   		echo 'An error has occurred! Aborting the script execution...'
+		exit 1
+	fi
+done
 
-# ask for the output
-echo "What is the output?"
-read output
+# Get the directory where the script is located
+cd releases
 
-GOOS=$target GOARCH=$arch go build -o $output $source
+# Zip each subdirectory separately
+for dir in */; do
+    zip -r "${dir%/}.zip" "$dir"
+done
