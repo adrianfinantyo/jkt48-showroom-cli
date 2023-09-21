@@ -4,8 +4,13 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/adrianfinantyo/jkt48-showroom-cli/utils"
 	"github.com/spf13/cobra"
 )
+
+func init() {
+	utils.ClearScreen()
+}
 
 var rootCmd = &cobra.Command{
 	Use:   "jkt48-showroom-cli",

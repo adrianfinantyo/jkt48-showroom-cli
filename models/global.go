@@ -17,3 +17,8 @@ type LiveRoom struct {
 	RoomKey   string
 	StreamURL string
 }
+
+type CustomRoom struct {
+	Nick   string
+	RoomId int
+}

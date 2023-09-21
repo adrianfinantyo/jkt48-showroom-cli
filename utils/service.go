@@ -8,27 +8,58 @@ import (
 	"strings"
 
 	"github.com/adrianfinantyo/jkt48-showroom-cli/models"
+	"github.com/schollz/progressbar/v3"
 )
 
-func GetAllJKT48Rooms() *[]models.Room {
+func GetAllJKT48Rooms(bar *progressbar.ProgressBar) *[]models.Room {
 	var jkt48Room []models.Room
 
-	res, err := http.Get("https://campaign.showroom-live.com/akb48_sr/data/room_status_list.json")
+	res, err := http.Get(AKB48RoomURL)
 	if err != nil {
-		fmt.Println(err)
+		LogError(err)
 	}
 	defer res.Body.Close()
 
 	var decodedData []models.Room
 	decoder := json.NewDecoder(res.Body)
 	if err := decoder.Decode(&decodedData); err != nil {
-		fmt.Println(err)
+		LogError(err)
 	}
 
 	for _, data := range decodedData {
 		if strings.Contains(data.Name, "JKT48") {
 			jkt48Room = append(jkt48Room, data)
+			bar.Add(1)
 		}
+	}
+
+	for _, data := range AddedRooms {
+		res, err := http.Get(fmt.Sprintf("%s/profile?room_id=%d", RoomApiURL, data.RoomId))
+		if err != nil {
+			LogError(err)
+		}
+		defer res.Body.Close()
+
+		var decodedData interface{}
+		decoder := json.NewDecoder(res.Body)
+		if err := decoder.Decode(&decodedData); err != nil {
+			LogError(err)
+		}
+
+		newRoom := models.Room{
+			Id:               data.RoomId,
+			Name:             decodedData.(map[string]interface{})["room_name"].(string),
+			URLKey:           decodedData.(map[string]interface{})["room_url_key"].(string),
+			ImageURL:         decodedData.(map[string]interface{})["image"].(string),
+			Description:      decodedData.(map[string]interface{})["description"].(string),
+			FollowerNum:      int(decodedData.(map[string]interface{})["follower_num"].(float64)),
+			IsLive:           decodedData.(map[string]interface{})["is_onlive"].(bool),
+			IsParty:          decodedData.(map[string]interface{})["is_party_enabled"].(bool),
+			NextLiveSchedule: 0,
+		}
+
+		jkt48Room = append(jkt48Room, newRoom)
+		bar.Add(1)
 	}
 
 	return &jkt48Room

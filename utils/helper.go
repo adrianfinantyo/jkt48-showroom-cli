@@ -1,6 +1,9 @@
 package utils
 
-import "github.com/fatih/color"
+import (
+	"github.com/fatih/color"
+	"github.com/inancgumus/screen"
+)
 
 func LogError(err error) {
 	if err != nil {
@@ -12,4 +15,9 @@ func LogError(err error) {
 
 func LogInfo(msg string) {
 	color.Blue(msg)
+}
+
+func ClearScreen() {
+	screen.Clear()
+	screen.MoveTopLeft()
 }
