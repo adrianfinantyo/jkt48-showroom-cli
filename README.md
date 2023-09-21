@@ -3,7 +3,7 @@
 Please note that this project is <b>not affiliated</b> with JKT48 or Showroom. This is just a <b>fan-made project</b>. Please support JKT48 by watching their live streaming on [Showroom](https://www.showroom-live.com/room/search?genre_id=0&keyword=jkt48). Thank you!
 
 <p align='center'>
-    <img src='https://media.tenor.com/KxvkYmd4peoAAAAd/ella-jkt48.gif' alt='Tiktok Videos of Ella JKT48' width='200px' />
+    <img width='250px' src='https://media.tenor.com/KxvkYmd4peoAAAAd/ella-jkt48.gif' />
 </p>
 
 ## What is JKT48 Showroom CLI?
