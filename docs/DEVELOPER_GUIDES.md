@@ -1,4 +1,4 @@
-# Consumer Setup Guide
+# Developer Setup Guide
 
 If you are the one who want to use this application and not as a developer, this is the ideal setup for you.
 
