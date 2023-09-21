@@ -11,7 +11,7 @@ import (
 	"github.com/schollz/progressbar/v3"
 )
 
-func GetAllJKT48Rooms(bar *progressbar.ProgressBar) *[]models.Room {
+func GetAllJKT48Rooms(bar *progressbar.ProgressBar, resultChan chan<- *[]models.Room) {
 	var jkt48Room []models.Room
 
 	res, err := http.Get(AKB48RoomURL)
@@ -29,9 +29,11 @@ func GetAllJKT48Rooms(bar *progressbar.ProgressBar) *[]models.Room {
 	for _, data := range decodedData {
 		if strings.Contains(data.Name, "JKT48") {
 			jkt48Room = append(jkt48Room, data)
-			bar.Add(1)
 		}
 	}
+
+	bar.ChangeMax(bar.GetMax() + len(jkt48Room))
+	bar.Add(len(jkt48Room))
 
 	for _, data := range AddedRooms {
 		res, err := http.Get(fmt.Sprintf("%s/profile?room_id=%d", RoomApiURL, data.RoomId))
@@ -62,7 +64,7 @@ func GetAllJKT48Rooms(bar *progressbar.ProgressBar) *[]models.Room {
 		bar.Add(1)
 	}
 
-	return &jkt48Room
+	resultChan <- &jkt48Room
 }
 
 func GetActiveRooms() *[]models.LiveRoom {

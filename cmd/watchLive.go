@@ -16,10 +16,9 @@ var watchLive = &cobra.Command{
 	Short: "Watch JKT48 member live stream",
 	Run: func(cmd *cobra.Command, args []string) {
 		liveRooms := utils.GetActiveRooms()
-
 		if len(*liveRooms) == 0 {
-			utils.LogInfo("No active rooms")
-			os.Exit(1)
+			utils.LogInfo("🤭 Oops, seems like there's no active rooms right now")
+			os.Exit(0)
 		}
 
 		selectedRoom := promptGetSelectMember(liveRooms)
@@ -27,13 +26,15 @@ var watchLive = &cobra.Command{
 			streamURL := promptSelectQuality(selectedRoom.StreamURL)
 			startVLCService(streamURL)
 		} else {
-			utils.LogInfo("No active rooms")
+			err := fmt.Errorf("⚠️ Error: Room ID is 0")
+			utils.LogError(err)
 			os.Exit(1)
 		}
 	},
 }
 
 func init() {
+	utils.PrintHeader("JKT48 Showroom CLI", "Watch Live Stream")
 	rootCmd.AddCommand(watchLive)
 }
 
