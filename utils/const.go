@@ -3,7 +3,7 @@ package utils
 import "github.com/adrianfinantyo/jkt48-showroom-cli/models"
 
 const (
-	AppVersion     = "v1.0.0"
+	AppVersion     = "v0.1.0"
 	AppName        = "JKT48 Showroom CLI"
 	AppDescription = "JKT48 Showroom CLI is a CLI tool to get information about JKT48 members showrooms"
 	AppAuthor      = "Adrian Finantyo"

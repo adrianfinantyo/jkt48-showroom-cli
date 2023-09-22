@@ -13,7 +13,7 @@ All notable changes to this project will be documented in this file.
 
 - `There is no bug fixed yet`
 
-## v1.0.0 - [2023-09-22]
+## v0.1.0 - [2023-09-22]
 
 ### Added
 
