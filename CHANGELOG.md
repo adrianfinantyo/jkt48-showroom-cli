@@ -6,6 +6,9 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 
+- Sort the list of members by live status and name
+- Rename vlc window title to `JKT48 Showroom CLI-{member_name}`
+- Add a new command to watch showroom live streaming directly to certain member (e.g. `jkt48-showroom watch -m "Ella"`)
 - Add the ability to add/remove members from the favorite list
 - Add the ability to record the live streaming
 
